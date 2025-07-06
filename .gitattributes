@@ -1,0 +1,14 @@
+* text=auto
+*.php diff=php
+
+# Ignore from prefer-dist install
+## Files
+.* export-ignore
+Makefile export-ignore
+tailwind.config.js export-ignore
+tsconfig.json export-ignore
+webpack.config.js export-ignore
+
+## Folders
+/Tests/ export-ignore
+/Build/ export-ignore
