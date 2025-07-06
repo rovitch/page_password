@@ -1,0 +1,19 @@
+<f:variable name="darkModeEnabled">{settings.enableDarkMode}</f:variable>
+<f:variable name="loginHighlightColor">{f:if(condition: settings.loginHighlightColor, then:settings.loginHighlightColor, else: '#000000')}</f:variable>
+<f:variable name="loginHighlightColorDark">{f:if(condition: settings.loginHighlightColorDark, then:settings.loginHighlightColorDark, else: '#ffffff')}</f:variable>
+<f:variable name="logo">{f:cObject(typoscriptObjectPath:'lib.pagepasswordLogo', data:{uid: record.uid, fieldname: 'settings.loginLogo'})}</f:variable>
+<f:variable name="logoDark">{f:cObject(typoscriptObjectPath:'lib.pagepasswordLogo', data:{uid: record.uid, fieldname: 'settings.loginLogoDark'})}</f:variable>
+
+<f:render partial="Assets" arguments="{_all}"/>
+
+<div id="page-password-form" class="page-password-form container flex flex-col items-center justify-center min-h-screen mx-auto {f:if(condition:darkModeEnabled, then:'dark:bg-gray-900')}">
+    <div class="w-full max-w-md mx-auto">
+        <f:render partial="Logo" arguments="{_all}"/>
+
+        <f:render partial="Heading" arguments="{_all}"/>
+
+        <f:render partial="FormErrors"/>
+
+        <f:render partial="Form" arguments="{_all}"/>
+    </div>
+</div>

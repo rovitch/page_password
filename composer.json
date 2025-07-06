@@ -1,0 +1,54 @@
+{
+	"name": "rovitch/page-password",
+	"description": "PagePassword provides a simple way to restrict access to specific pages and their sub-pages with password authentication.",
+	"license": "GPL-2.0-or-later",
+	"type": "typo3-cms-extension",
+	"authors": [],
+	"require": {
+		"typo3/cms-core": "^12.4 || ^13.4",
+    "typo3/cms-fluid-styled-content": "^12.4 || ^13.4"
+	},
+	"require-dev": {
+		"ergebnis/composer-normalize": "^2.45",
+		"friendsofphp/php-cs-fixer": "^v3",
+		"typo3/coding-standards": "^0.8.0",
+		"typo3/testing-framework": "*",
+		"saschaegerer/phpstan-typo3": "^1.10",
+		"phpstan/phpstan": "^1.12",
+		"phpspec/prophecy-phpunit": "^v2.3",
+		"phpunit/phpcov": "^10"
+	},
+	"replace": {
+		"typo3-ter/page_password": "self.version"
+	},
+	"autoload": {
+		"psr-4": {
+			"Rovitch\\PagePassword\\": "Classes"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Rovitch\\PagePassword\\Tests\\": "Tests"
+		}
+	},
+	"config": {
+		"allow-plugins": {
+			"ergebnis/composer-normalize": true,
+			"typo3/class-alias-loader": true,
+			"typo3/cms-composer-installers": true
+		},
+		"bin-dir": ".Build/bin",
+		"vendor-dir": ".Build/vendor"
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "page_password",
+			"web-dir": ".Build/public"
+		}
+	},
+	"scripts": {
+		"post-autoload-dump": [
+			"TYPO3\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare"
+		]
+	}
+}

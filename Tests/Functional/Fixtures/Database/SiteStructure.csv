@@ -1,0 +1,6 @@
+"pages"
+,"uid","pid","title","slug","tx_pagepassword_enable","tx_pagepassword_extend_to_subpages","tx_pagepassword_password"
+,1,0,"Home","/",0,0,""
+,2,1,"Protected page","/protected-page",1,1,"$argon2id$v=19$m=65536,t=16,p=1$S1BDNkRjeFZEd2YxZVVISg$6SV+ukufNM1TRMXzbYOV/VeLp+HFPdREereYAPnKEgY"
+,3,2,"SubPage inherit protection","/subpage-inherit-protection",0,0,""
+,4,1,"Login","/login",0,0,""

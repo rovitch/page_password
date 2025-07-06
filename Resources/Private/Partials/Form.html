@@ -1,0 +1,25 @@
+<f:form id="page-password-login" action="login" extensionName="pagePassword" method="POST" requestToken="{requestToken}">
+    <div>
+        <label for="password" class="block mt-4 mb-2 text-sm text-gray-600 font-bold {f:if(condition:darkModeEnabled, then:'dark:text-gray-200')}">
+            <f:translate extensionName="page_password" key="form.password"/>
+        </label>
+        <f:form.password id="password" name="password" required="required"
+                         additionalAttributes="{autofocus:'autofocus', placeholder: '{f:translate(extensionName:\'page_password\', key:\'form.password\')}'}"
+                         class="block w-full px-3 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border rounded-lg border-custom-light focus:outline-none focus:ring ring-custom-light focus:ring-opacity-60 {f:if(condition:darkModeEnabled, then:'dark:placeholder-gray-200 dark:bg-gray-900 dark:text-gray-300 focus:border-white dark:focus:border-black dark:border-custom-dark dark:ring-custom-dark')}"/>
+    </div>
+    <div class="relative">
+        <div class="flex">
+            <button type="submit"
+                    class="w-full justify-center inline-flex px-6 py-3 mt-4 cursor-pointer text-sm font-medium tracking-wide text-custom-a11y-light transition-brightness duration-300 transform rounded-lg bg-custom-light hover:brightness-90 focus:outline-none focus:ring ring-custom-light focus:ring-opacity-60 {f:if(condition:darkModeEnabled, then:'dark:text-custom-a11y-dark dark:bg-custom-dark dark:hover:brightness-110')}">
+                <svg class="hidden animate-spin h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <f:translate extensionName="page_password" key="form.login" />
+            </button>
+        </div>
+    </div>
+    <f:form.hidden name="redirect_uri" value="{redirectUri}"/>
+    <f:form.hidden name="uid" value="{protectedPageId}"/>
+</f:form>

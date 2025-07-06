@@ -1,0 +1,10 @@
+<f:flashMessages queueIdentifier="extbase.flashmessages.tx_pagepassword_form" as="flashMessages">
+    <f:for each="{flashMessages}" as="flashMessage">
+        <f:if condition="{flashMessage.severity.value} == 2">
+            <div class="my-3 bg-gray-50 border-l-4 border-red-600 text-gray-700 p-4" role="alert">
+                <p class="font-bold">{flashMessage.title}</p>
+                <p>{flashMessage.message}</p>
+            </div>
+        </f:if>
+    </f:for>
+</f:flashMessages>

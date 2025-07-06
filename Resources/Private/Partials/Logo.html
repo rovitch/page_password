@@ -1,0 +1,23 @@
+<f:if condition="{logo}">
+    <f:then>
+        <div class="flex justify-center mx-auto">
+            <div class="{f:if(condition:'{darkModeEnabled} && {logoDark}', then:'dark:hidden')}">
+                {logo -> f:format.raw()}
+            </div>
+            <f:if condition="{darkModeEnabled} && {logoDark}">
+                <div class="hidden dark:block">
+                    {logoDark -> f:format.raw()}
+                </div>
+            </f:if>
+        </div>
+    </f:then>
+    <f:else>
+        <div class="flex justify-center mx-auto">
+            <svg class="w-auto h-36 sm:h-36 fill-custom-light {f:if(condition:darkModeEnabled, then:'dark:fill-custom-dark')}"
+                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+                <path fill="#799b9b" d="M1647 279a204 204 0 0 0-91-115c-34-21-73-31-118-31h-356v146h565Z"/>
+                <path d="M1505 616h81c42 0 77-34 77-76 0-43-35-77-77-77H817v-38c0-60-13-112-37-157-25-46-59-81-104-105-45-25-97-38-156-38s-111 13-156 38c-44 24-79 59-104 105-24 45-37 97-37 157v230c0 60 13 112 37 157 25 46 60 81 104 105 45 25 97 38 156 38s111-13 156-38c45-24 79-59 104-105 24-45 37-97 37-157v-39h265v330h153V619h93l183 327h186l-192-330Zm-847 43c0 28-6 53-17 75-11 21-27 38-48 50s-45 18-73 18-52-6-73-18c-20-12-37-28-48-50s-17-47-17-75V421c0-28 6-53 17-75 11-21 28-38 48-50 21-12 45-17 73-17s52 5 73 17 37 29 48 50c11 22 17 47 17 75v238Z"/>
+            </svg>
+        </div>
+    </f:else>
+</f:if>

@@ -1,0 +1,9 @@
+.Build
+.php-cs-fixer.cache
+.idea
+composer.lock
+/Build/phpcov
+/Build/phpunit/.phpunit.cache
+/node_modules/
+composer.json.testing
+package-lock.json

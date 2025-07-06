@@ -1,0 +1,7 @@
+<f:asset.css identifier="page-password" href="EXT:page_password/Resources/Public/assets/css/main.min.css"/>
+
+<f:asset.script identifier="page-password" src="EXT:page_password/Resources/Public/assets/js/bundle.js"/>
+<f:asset.script identifier="page-password-inline">
+    pagePassword.addCustomStyles(`{loginHighlightColor}`, `{loginHighlightColorDark}`);
+    pagePassword.bindSubmitForm(document.getElementById('page-password-login'));
+</f:asset.script>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file source-language="en" target-language="fr" datatype="plaintext" original="EXT:page_password/Resources/Private/Language/locallang.xlf" date="2025-01-13T12:00:00Z" product-name="page_password">
+		<header/>
+		<body>
+			<trans-unit id="plugin.page_password_form">
+				<source>Password login form</source>
+				<target>Formulaire de connexion par mot de passe</target>
+			</trans-unit>
+			<trans-unit id="plugin.page_password_form.description">
+				<source>Password login form used to protect pages by a password</source>
+				<target>Formulaire de connexion utilisé pour protéger l'accès à des pages par un mot de passe</target>
+			</trans-unit>
+
+			<trans-unit id="plugin.page_password_form.settings.tab.configuration">
+				<source>Configuration</source>
+				<target>Configuration</target>
+			</trans-unit>
+
+			<trans-unit id="plugin.page_password_form.settings.styles.loginLogo">
+				<source>Logo</source>
+				<target>Logo</target>
+			</trans-unit>
+			<trans-unit id="plugin.page_password_form.settings.styles.loginLogo.description">
+				<source>If set, this logo will be used instead of the svg icon above the form</source>
+				<source>Logo : Si défini, ce logo sera utilisé à la place de l'icône svg au-dessus du formulaire</source>
+			</trans-unit>
+
+			<trans-unit id="plugin.page_password_form.settings.styles.loginLogoAlt">
+				<source>Logo Alt-Text</source>
+				<target>Logo Alt-Text</target>
+			</trans-unit>
+			<trans-unit id="plugin.page_password_form.settings.styles.loginLogoAlt.description">
+				<source>If a custom logo is set, this text will be used as the alt attribute of the img tag.</source>
+				<target>Si un logo personnalisé est défini, ce texte sera utilisé comme attribut alt de la balise img.</target>
+			</trans-unit>
+
+			<trans-unit id="plugin.page_password_form.settings.styles.loginHighlightColor">
+				<source>Highlight Color</source>
+				<target>Couleur de mise en évidence</target>
+			</trans-unit>
+			<trans-unit id="plugin.page_password_form.settings.styles.loginHighlightColor.description">
+				<source>If set, this color will be used as highlight color in the login screen.</source>
+				<target>Si définie, cette couleur sera utilisée comme couleur de mise en évidence sur l'écran de connexion.</target>
+			</trans-unit>
+
+			<trans-unit id="plugin.page_password_form.settings.styles.loginHighlightColorDark">
+				<source>Dark mode Highlight Color</source>
+				<target>Couleur de mise en évidence du mode sombre</target>
+			</trans-unit>
+			<trans-unit id="plugin.page_password_form.settings.styles.loginHighlightColorDark.description">
+				<source>If set, this color will be used as highlight color in the login screen.</source>
+				<target>Si définie, cette couleur sera utilisée comme couleur de mise en évidence sur l'écran de connexion.</target>
+			</trans-unit>
+
+			<trans-unit id="page.title">
+				<source>Access to a protected page</source>
+				<target>Accès à une page protégée</target>
+			</trans-unit>
+			<trans-unit id="form.title">
+				<source>Access to a protected page</source>
+				<target>Accès à une page protégée</target>
+			</trans-unit>
+			<trans-unit id="form.description">
+				<source><![CDATA[You are trying to access a protected page.<br>Please enter your password to access this page.]]></source>
+				<target><![CDATA[Vous tentez d'accéder à une page protégée.<br>Merci de renseigner le mot de passe pour accéder à cette page]]></target>
+			</trans-unit>
+			<trans-unit id="form.password">
+				<source>Password</source>
+				<target>Mot de passe</target>
+			</trans-unit>
+			<trans-unit id="form.login">
+				<source>Go to page</source>
+				<target>Accéder à la page</target>
+			</trans-unit>
+			<trans-unit id="form.redirect">
+				<source>After successful authentication, you will be redirected to:</source>
+				<target>Après une authentification réussie, vous serez redirigé vers :</target>
+			</trans-unit>
+			<trans-unit id="form.error">
+				<source>Error</source>
+				<target>Erreur</target>
+			</trans-unit>
+			<trans-unit id="form.invalid_password">
+				<source>Invalid password</source>
+				<target>Mot de passe invalide</target>
+			</trans-unit>
+			<trans-unit id="form.invalid_token">
+				<source>Invalid request token</source>
+				<target>Token invalide</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

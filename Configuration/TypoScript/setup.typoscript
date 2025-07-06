@@ -1,0 +1,20 @@
+lib.pagepasswordLogo = COA
+lib.pagepasswordLogo {
+  10 = FILES
+  10 {
+    references {
+      uid.data = field: uid
+      table = tt_content
+      fieldName.data = field: fieldname
+    }
+    renderObj = IMAGE
+    renderObj {
+      file.import.data = file:current:uid
+      file.treatIdAsReference = 1
+      altText.data = file:current:alternative
+      titleText.data = file:current:title
+      params = class="w-auto h-36 sm:h-36"
+    }
+  }
+}
+

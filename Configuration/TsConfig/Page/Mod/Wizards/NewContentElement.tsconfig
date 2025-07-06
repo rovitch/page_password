@@ -1,0 +1,17 @@
+mod.wizards {
+  newContentElement.wizardItems {
+    forms {
+      elements {
+        pagepassword_form {
+          iconIdentifier = pagepassword-form
+          title = LLL:EXT:page_password/Resources/Private/Language/locallang.xlf:plugin.page_password_form
+          description = LLL:EXT:page_password/Resources/Private/Language/locallang.xlf:plugin.page_password_form.description
+          tt_content_defValues {
+            CType = pagepassword_form
+          }
+        }
+      }
+      show := addToList(pagepassword_form)
+    }
+  }
+}

@@ -1,0 +1,2 @@
+@import 'EXT:page_password/Configuration/TsConfig/Page/Mod/Wizards/NewContentElement.tsconfig'
+@import 'EXT:page_password/Configuration/TsConfig/BackendLayouts/Login.tsconfig'

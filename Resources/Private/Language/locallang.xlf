@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file source-language="en" datatype="plaintext" original="EXT:page_password/Resources/Private/Language/locallang.xlf" date="2025-01-13T12:00:00Z" product-name="page_password">
+		<header/>
+		<body>
+			<trans-unit id="plugin.page_password_form">
+				<source>Password login form</source>
+			</trans-unit>
+			<trans-unit id="plugin.page_password_form.description">
+				<source>Login form used to protect access to pages with a password</source>
+			</trans-unit>
+			<trans-unit id="plugin.page_password_form.settings.tab.configuration">
+				<source>Configuration</source>
+			</trans-unit>
+
+			<trans-unit id="plugin.page_password_form.settings.styles.enableDarkMode">
+				<source>Dark mode</source>
+			</trans-unit>
+
+			<trans-unit id="plugin.page_password_form.settings.styles.loginLogo">
+				<source>Logo</source>
+			</trans-unit>
+			<trans-unit id="plugin.page_password_form.settings.styles.loginLogo.description">
+				<source>If set, this logo will be used instead of the svg icon above the form</source>
+			</trans-unit>
+
+			<trans-unit id="plugin.page_password_form.settings.styles.loginLogoDark">
+				<source>Dark mode logo</source>
+			</trans-unit>
+			<trans-unit id="plugin.page_password_form.settings.styles.loginLogoDark.description">
+				<source>If set, on dark mode, this logo will be used instead of the logo above</source>
+			</trans-unit>
+
+			<trans-unit id="plugin.page_password_form.settings.styles.loginLogoAlt">
+				<source>Logo Alt-Text</source>
+			</trans-unit>
+			<trans-unit id="plugin.page_password_form.settings.styles.loginLogoAlt.description">
+				<source>If a custom logo is set, this text will be used as the alt attribute of the img tag.</source>
+			</trans-unit>
+
+			<trans-unit id="plugin.page_password_form.settings.styles.loginHighlightColor">
+				<source>Highlight Color</source>
+			</trans-unit>
+			<trans-unit id="plugin.page_password_form.settings.styles.loginHighlightColor.description">
+				<source>If set, this color will be used as highlight color in the login screen.</source>
+			</trans-unit>
+
+			<trans-unit id="plugin.page_password_form.settings.styles.loginHighlightColorDark">
+				<source>Dark mode Highlight Color</source>
+			</trans-unit>
+			<trans-unit id="plugin.page_password_form.settings.styles.loginHighlightColorDark.description">
+				<source>If set, this color will be used as highlight color in the login screen.</source>
+			</trans-unit>
+
+			<trans-unit id="page.title">
+				<source>Access to a protected page</source>
+			</trans-unit>
+			<trans-unit id="form.title">
+				<source>Access to a protected page</source>
+			</trans-unit>
+			<trans-unit id="form.description">
+				<source><![CDATA[You are trying to access a protected page.<br>Please enter your password to access this page.]]></source>
+			</trans-unit>
+			<trans-unit id="form.password">
+				<source>Password</source>
+			</trans-unit>
+			<trans-unit id="form.login">
+				<source>Go to page</source>
+			</trans-unit>
+			<trans-unit id="form.redirect">
+				<source>After successful authentication you will be redirected to:</source>
+			</trans-unit>
+			<trans-unit id="form.error">
+				<source>Error</source>
+			</trans-unit>
+			<trans-unit id="form.invalid_password">
+				<source>Invalid password</source>
+			</trans-unit>
+			<trans-unit id="form.invalid_token">
+				<source>Invalid request token</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

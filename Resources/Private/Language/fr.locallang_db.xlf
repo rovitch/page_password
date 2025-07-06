@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="fr" datatype="plaintext" original="EXT:page_password/Resources/Private/Language/locallang_db.xlf" date="2024-12-11T19:00:00Z" product-name="page_password">
+        <header/>
+        <body>
+            <trans-unit id="pages.tx_pagepassword.title">
+                <source>Page protection</source>
+                <target>Protection de page</target>
+            </trans-unit>
+            <trans-unit id="pages.tx_pagepassword_enable">
+                <source>Enable page password protection</source>
+                <target>Activer la protection de page par mot de passe</target>
+            </trans-unit>
+            <trans-unit id="pages.tx_pagepassword_extend_to_subpages">
+                <source>Extend to subpages</source>
+                <target>Étendre aux sous-pages</target>
+            </trans-unit>
+            <trans-unit id="pages.tx_pagepassword_password">
+                <source>Password</source>
+                <target>Mot de passe</target>
+            </trans-unit>
+            <trans-unit id="pages.tx_pagepassword_password.random">
+                <source>Create random password</source>
+                <target>Créer un mot de passe aléatoire</target>
+            </trans-unit>
+
+			<trans-unit id="sites.tx_pagepassword">
+				<source>Page protection</source>
+				<target>Protection de page</target>
+			</trans-unit>
+			<trans-unit id="sites.tx_pagepassword_default_login_page">
+				<source>Default login page</source>
+				<target>Page de connexion par défaut</target>
+			</trans-unit>
+        </body>
+    </file>
+</xliff>

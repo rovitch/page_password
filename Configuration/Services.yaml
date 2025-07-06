@@ -1,0 +1,11 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Rovitch\PagePassword\:
+    resource: '../Classes/*'
+
+  Rovitch\PagePassword\Controller\AuthController:
+    public: true
