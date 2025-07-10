@@ -119,7 +119,7 @@ final class AuthControllerTest extends FunctionalTestCase
      */
     #[Test]
     #[DataProvider('protectedPagesProvider')]
-    public function loginActionWithInvalidPasswordRedirectToForm(array $page): void
+    public function loginActionWithInvalidPasswordShowFormWithError(array $page): void
     {
         $request = new InternalRequest($page['slug']);
         $response = $this->executeFrontendSubRequest($request, null, true);
@@ -131,9 +131,8 @@ final class AuthControllerTest extends FunctionalTestCase
             ->with('tx_pagepassword_form.password', 'invalid_password')
             ->toPostRequest($request->withUri(new Uri('/login'))->withCookieParams([$nonceCookie->getName() => $nonceCookie->getValue()]));
 
-        $response = $this->executeFrontendSubRequest($postRequest);
-        $location = $response->getHeader('Location')[0];
-        self::assertStringContainsString('login', $location);
+        $responseHtml = (string)$this->executeFrontendSubRequest($postRequest)->getBody();
+        self::assertStringContainsString('Invalid password', $responseHtml);
     }
 
     /**
@@ -141,7 +140,7 @@ final class AuthControllerTest extends FunctionalTestCase
      */
     #[Test]
     #[DataProvider('protectedPagesProvider')]
-    public function loginActionWithInvalidRequestTokenRedirectToForm(array $page): void
+    public function loginActionWithInvalidRequestTokenShowFormWithError(array $page): void
     {
         $request = new InternalRequest($page['slug']);
         $response = $this->executeFrontendSubRequest($request, null, true);
@@ -154,9 +153,8 @@ final class AuthControllerTest extends FunctionalTestCase
             ->with('__RequestToken', 'invalid_token')
             ->toPostRequest($request->withUri(new Uri('/login'))->withCookieParams([$nonceCookie->getName() => $nonceCookie->getValue()]));
 
-        $response = $this->executeFrontendSubRequest($postRequest);
-        $location = $response->getHeader('Location')[0];
-        self::assertStringContainsString('login', $location);
+        $responseHtml = (string)$this->executeFrontendSubRequest($postRequest)->getBody();
+        self::assertStringContainsString('Invalid request token', $responseHtml);
     }
 
     /**

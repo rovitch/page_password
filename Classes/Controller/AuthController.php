@@ -11,6 +11,7 @@ use Rovitch\PagePassword\Utility\RequestUtility;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\SecurityAspect;
 use TYPO3\CMS\Core\Http\PropagateResponseException;
+use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
@@ -42,22 +43,11 @@ class AuthController extends ActionController
     public function formAction(): ResponseInterface
     {
         if (!$this->authService->hasActiveProtection() || $this->authService->isAccessGranted()) {
-            $response = $this->responseFactory->createResponse()->withHeader('Location', $this->redirectUri);
+            $response = new RedirectResponse($this->redirectUri);
             throw new PropagateResponseException($response, 303);
         }
 
-        $requestToken = RequestToken::create('auth/login');
-        $protectedPageId = RequestUtility::extractProtectedPageId($this->request);
-        $record = $this->request->getAttribute('currentContentObject')->data;
-        $this->view->assignMultiple([
-            'record' => $record,
-            'redirectUri' => $this->redirectUri,
-            'protectedPageId' => $protectedPageId,
-            'settings' => $this->settings,
-            'requestToken' => $requestToken,
-        ]);
-
-        return $this->htmlResponse();
+        return $this->renderForm();
     }
 
     /**
@@ -70,7 +60,7 @@ class AuthController extends ActionController
         $requestToken = $securityAspect->getReceivedRequestToken();
 
         if ($requestToken === null || $requestToken === false || $requestToken->scope !== 'auth/login') {
-            return $this->redirectToLoginFormWithErrorMessage(
+            return $this->renderFormWithError(
                 $this->languageService->sL('LLL:EXT:page_password/Resources/Private/Language/locallang.xlf:form.invalid_token'),
             );
         }
@@ -83,19 +73,16 @@ class AuthController extends ActionController
 
         $parameters = RequestUtility::extractParameters($this->request);
         if ($this->authService->attemptPageUnlock($parameters['password'] ?? '')) {
-            $response = $this->responseFactory->createResponse()->withHeader('Location', $this->redirectUri);
+            $response =  new RedirectResponse($this->redirectUri);
             throw new PropagateResponseException($response, 303);
         }
 
-        return $this->redirectToLoginFormWithErrorMessage(
+        return $this->renderFormWithError(
             $this->languageService->sL('LLL:EXT:page_password/Resources/Private/Language/locallang.xlf:form.invalid_password'),
         );
     }
 
-    /**
-     * @throws PropagateResponseException
-     */
-    protected function redirectToLoginFormWithErrorMessage(string $message): ResponseInterface
+    protected function renderFormWithError(string $message): ResponseInterface
     {
         $this->addFlashMessage(
             $message,
@@ -103,16 +90,26 @@ class AuthController extends ActionController
             ContextualFeedbackSeverity::ERROR,
         );
 
-        $parameters = RequestUtility::extractParameters($this->request);
-        $uri = $this->uriBuilder->reset()->setTargetPageUid($this->frontendController->id)->setArguments([
-            'tx_pagepassword_form' => [
-                'uid' => $parameters['uid'] ?? 0,
-                'redirect_uri' => $this->redirectUri,
-            ],
-        ])->build();
+        return $this->renderForm();
+    }
 
-        $response = $this->responseFactory->createResponse()->withHeader('Location', $uri);
-        throw new PropagateResponseException($response, 303);
+    protected function renderForm(): ResponseInterface
+    {
+        $requestToken = RequestToken::create('auth/login');
+        $protectedPageId = RequestUtility::extractProtectedPageId($this->request);
+        $record = $this->request->getAttribute('currentContentObject')->data;
+
+        $this->view->assignMultiple([
+            'record' => $record,
+            'redirectUri' => $this->redirectUri,
+            'protectedPageId' => $protectedPageId,
+            'settings' => $this->settings,
+            'requestToken' => $requestToken,
+        ]);
+        /** @phpstan-ignore method.notFound */
+        $this->view->getRenderingContext()->setControllerAction('form');
+
+        return $this->htmlResponse();
     }
 
     /**
@@ -129,18 +126,19 @@ class AuthController extends ActionController
     {
         $parameters = RequestUtility::extractParameters($this->request);
         $redirectUri = $parameters['redirect_uri'] ?? '';
+        return $this->isRelativeUrl($redirectUri) ? new Uri($redirectUri) : new Uri('/');
+    }
 
-        $serverUri = $this->request->getUri();
-        $fallBackUri = (new Uri())->withScheme($serverUri->getScheme())->withHost($serverUri->getHost());
-
-        try {
-            $parsedRedirectUri = new Uri($redirectUri);
-            if ($parsedRedirectUri->getHost() !== $serverUri->getHost()) {
-                return $fallBackUri;
+    protected function isRelativeUrl(string $url): bool
+    {
+        $url = GeneralUtility::sanitizeLocalUrl($url);
+        if (!empty($url)) {
+            $parsedUrl = @parse_url($url);
+            if ($parsedUrl !== false && !isset($parsedUrl['scheme']) && !isset($parsedUrl['host'])) {
+                // If the relative URL starts with a slash, we need to check if it's within the current site path
+                return $parsedUrl['path'][0] !== '/' || str_starts_with($parsedUrl['path'], GeneralUtility::getIndpEnv('TYPO3_SITE_PATH'));
             }
-            return $parsedRedirectUri;
-        } catch (\InvalidArgumentException) {
-            return $fallBackUri;
         }
+        return false;
     }
 }
