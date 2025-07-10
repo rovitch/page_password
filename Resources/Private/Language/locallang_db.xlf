@@ -19,10 +19,10 @@
                 <source>Create random password</source>
             </trans-unit>
 
-			<trans-unit id="site.tx_pagepassword">
+			<trans-unit id="sites.tx_pagepassword">
 				<source>Page protection</source>
 			</trans-unit>
-			<trans-unit id="site.tx_pagepassword_default_login_page">
+			<trans-unit id="sites.tx_pagepassword_default_login_page">
 				<source>Default login page</source>
 			</trans-unit>
         </body>
