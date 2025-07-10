@@ -43,7 +43,7 @@ defined('TYPO3') || die();
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript(
         $extensionName,
         'setup',
-        "@import 'EXT:PagePassword/Configuration/TypoScript/setup.typoscript'",
+        "@import 'EXT:page_password/Configuration/TypoScript/setup.typoscript'",
     );
 
 })('PagePassword');
