@@ -23,7 +23,7 @@ defined('TYPO3') || die();
     );
 
     $GLOBALS['TCA']['tt_content']['types']['pagepassword_form'] = array_replace_recursive(
-        $GLOBALS['TCA']['tt_content']['types']['pagepassword_form'],
+        $GLOBALS['TCA']['tt_content']['types']['pagepassword_form'] ?? [],
         [
             'showitem' => '
                     --div--;General,
