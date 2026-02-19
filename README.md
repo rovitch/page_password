@@ -14,10 +14,21 @@ PagePassword provides a simple way to restrict access to specific pages and thei
 - 🌐 **Multi-language support**: Works with TYPO3 localization
 - ⚡ **Performance optimized**: Minimal impact on site performance
 
+## Customization
+- Enable/disable dark mode
+- Choose your own logo for both light and dark mode
+- Choose your own primary color for both light and dark mode
+- More coming soon...
+
+![examples.png](Documentation/img/examples.png)
+
 ## What's next?
+- Typo3 v14 compatibility
+- Enhanced documentation
 - Logging
 - Rate limiter
 - Backend module overview
+- More customizations
 
 ## Requirements
 
