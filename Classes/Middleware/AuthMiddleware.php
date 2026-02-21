@@ -55,7 +55,7 @@ class AuthMiddleware implements MiddlewareInterface
         /** @var Site $site */
         $site = $request->getAttribute('site');
         $uri = $site->getRouter()
-            ->generateUri($authService->getLoginPageId(), $queryParams, '', RouterInterface::ABSOLUTE_URL);
+            ->generateUri($authService->getLoginPageId(), $queryParams, '', RouterInterface::ABSOLUTE_PATH);
 
         return new RedirectResponse($uri, 303);
     }
