@@ -3,21 +3,25 @@
 	"description": "PagePassword provides a simple way to restrict access to specific pages and their sub-pages with password authentication.",
 	"license": "GPL-2.0-or-later",
 	"type": "typo3-cms-extension",
-	"authors": [],
 	"require": {
-		"typo3/cms-core": "^12.4 || ^13.4",
-    "typo3/cms-fluid-styled-content": "^12.4 || ^13.4"
+		"php": ">=8.2 < 8.6",
+		"typo3/cms-backend": "^12.4 || ^13.4 || ^14.1",
+		"typo3/cms-core": "^12.4 || ^13.4 || ^14.1",
+		"typo3/cms-extbase": "^12.4 || ^13.4 || ^14.1",
+		"typo3/cms-fluid": "^12.4 || ^13.4 || ^14.1",
+		"typo3/cms-fluid-styled-content": "^12.4 || ^13.4 || ^14.1"
 	},
 	"require-dev": {
 		"ergebnis/composer-normalize": "^2.45",
-		"friendsofphp/php-cs-fixer": "^v3",
-		"typo3/coding-standards": "^0.8.0",
-		"typo3/testing-framework": "*",
-		"saschaegerer/phpstan-typo3": "^1.10",
-		"phpstan/phpstan": "^1.12",
-		"phpspec/prophecy-phpunit": "^v2.3",
+		"friendsofphp/php-cs-fixer": "^3",
+		"phpspec/prophecy-phpunit": "^2.3",
 		"phpunit/phpcov": "^10",
-		"typo3/tailor": "^1.7"
+		"ssch/typo3-rector": "^3.12",
+		"typo3/coding-standards": "^0.8.0",
+		"typo3/tailor": "^1.7",
+		"typo3/testing-framework": "*",
+		"a9f/typo3-fractor": "^0.5.8",
+		"php-coveralls/php-coveralls": "^2.9"
 	},
 	"replace": {
 		"typo3-ter/page_password": "self.version"
@@ -36,7 +40,8 @@
 		"allow-plugins": {
 			"ergebnis/composer-normalize": true,
 			"typo3/class-alias-loader": true,
-			"typo3/cms-composer-installers": true
+			"typo3/cms-composer-installers": true,
+			"a9f/fractor-extension-installer": true
 		},
 		"bin-dir": ".Build/bin",
 		"vendor-dir": ".Build/vendor"

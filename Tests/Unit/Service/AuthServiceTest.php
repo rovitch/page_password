@@ -12,11 +12,11 @@ use Rovitch\PagePassword\Service\AuthService;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Http\ServerRequest;
+use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 class AuthServiceTest extends UnitTestCase
@@ -27,9 +27,9 @@ class AuthServiceTest extends UnitTestCase
     {
         parent::setUp();
 
-        $linkService = $this->createMock(\TYPO3\CMS\Core\LinkHandling\LinkService::class);
+        $linkService = $this->createMock(LinkService::class);
         $linkService->method('resolve')->willReturn(['pageuid' => 123]);
-        GeneralUtility::setSingletonInstance(\TYPO3\CMS\Core\LinkHandling\LinkService::class, $linkService);
+        GeneralUtility::setSingletonInstance(LinkService::class, $linkService);
     }
 
     /**
@@ -172,7 +172,7 @@ class AuthServiceTest extends UnitTestCase
         $rootlineUtility = $this->createMock(RootlineUtility::class);
         $rootlineUtility->method('get')->willReturn($pageHierarchy);
 
-        $authService = new AuthService();
+        $authService = GeneralUtility::makeInstance(AuthService::class, GeneralUtility::makeInstance(LinkService::class));
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
         $authStatus = $authService->isAccessGranted();
@@ -231,8 +231,6 @@ class AuthServiceTest extends UnitTestCase
         $this->resetSingletonInstances = true;
 
         $request = $this->createTestRequest();
-        $controller = $request->getAttribute('frontend.controller');
-        $controller->rootLine = $pageHierarchy;
 
         $frontendUser = $this->prophesize(FrontendUserAuthentication::class);
         $frontendUser->getSessionData('tx_pagepassword_unlocked_pages')->shouldBeCalled();
@@ -244,7 +242,7 @@ class AuthServiceTest extends UnitTestCase
         $rootlineUtility = $this->createMock(RootlineUtility::class);
         $rootlineUtility->method('get')->willReturn($pageHierarchy);
 
-        $authService = new AuthService();
+        $authService = GeneralUtility::makeInstance(AuthService::class, GeneralUtility::makeInstance(LinkService::class));
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
         $unlockSuccessful = $authService->attemptPageUnlock('test');
@@ -271,7 +269,7 @@ class AuthServiceTest extends UnitTestCase
         $rootlineUtility = $this->createMock(RootlineUtility::class);
         $rootlineUtility->method('get')->willReturn($pageWithInvalidHash);
 
-        $authService = new AuthService();
+        $authService = GeneralUtility::makeInstance(AuthService::class, GeneralUtility::makeInstance(LinkService::class));
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
         $unlockResult = $authService->attemptPageUnlock('test');
@@ -289,7 +287,7 @@ class AuthServiceTest extends UnitTestCase
         $rootlineUtility = $this->createMock(RootlineUtility::class);
         $rootlineUtility->method('get')->willReturn([]);
 
-        $authService = new AuthService();
+        $authService = GeneralUtility::makeInstance(AuthService::class, GeneralUtility::makeInstance(LinkService::class));
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
         $isSpecialPage = $authService->isCurrentPageLoginForm();
@@ -307,7 +305,7 @@ class AuthServiceTest extends UnitTestCase
         $rootlineUtility = $this->createMock(RootlineUtility::class);
         $rootlineUtility->method('get')->willReturn([]);
 
-        $authService = new AuthService();
+        $authService = GeneralUtility::makeInstance(AuthService::class, GeneralUtility::makeInstance(LinkService::class));
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
         $loginPageId = $authService->getLoginPageId();
@@ -330,7 +328,7 @@ class AuthServiceTest extends UnitTestCase
             ],
         ]);
 
-        $authService = new AuthService();
+        $authService = GeneralUtility::makeInstance(AuthService::class, GeneralUtility::makeInstance(LinkService::class));
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
         $hasActiveProtection = $authService->hasActiveProtection();
@@ -340,9 +338,6 @@ class AuthServiceTest extends UnitTestCase
 
     private function createTestRequest(string $pageType = '0', int $pageId = 1): ServerRequestInterface
     {
-        $frontendController = $this->createMock(TypoScriptFrontendController::class);
-        $frontendController->rootLine = [];
-
         $frontendUser = $this->createMock(FrontendUserAuthentication::class);
         $pageArguments = new PageArguments($pageId, $pageType, []);
 
@@ -353,7 +348,6 @@ class AuthServiceTest extends UnitTestCase
         $site->method('getConfiguration')->willReturn(['pagepassword_default_login_page' => 't3://page?uid=123']);
 
         return $request->withAttribute('routing', $pageArguments)
-            ->withAttribute('frontend.controller', $frontendController)
             ->withAttribute('frontend.user', $frontendUser)
             ->withAttribute('site', $site);
     }

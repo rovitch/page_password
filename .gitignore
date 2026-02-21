@@ -8,3 +8,4 @@ composer.lock
 composer.json.testing
 package-lock.json
 .env
+.cache

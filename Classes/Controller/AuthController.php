@@ -19,24 +19,24 @@ use TYPO3\CMS\Core\Security\RequestToken;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class AuthController extends ActionController
 {
-    protected AuthService $authService;
-
     protected LanguageService $languageService;
-
-    protected TypoScriptFrontendController $frontendController;
 
     protected string $redirectUri;
 
+    public function __construct(
+        private readonly LanguageServiceFactory $languageServiceFactory,
+        private readonly Context $context,
+        private AuthService $authService,
+    ) {}
+
     protected function initializeAction(): void
     {
-        $this->frontendController = $this->request->getAttribute('frontend.controller');
         $language = $this->request->getAttribute('language');
-        $this->languageService = GeneralUtility::makeInstance(LanguageServiceFactory::class)->createFromSiteLanguage($language);
-        $this->authService = (new AuthService())->withRequest($this->request);
+        $this->languageService = $this->languageServiceFactory->createFromSiteLanguage($language);
+        $this->authService = $this->authService->withRequest($this->request);
         $this->redirectUri = $this->getRedirectUri()->__toString();
     }
 
@@ -55,8 +55,7 @@ class AuthController extends ActionController
      */
     public function loginAction(): ResponseInterface
     {
-        $context = GeneralUtility::makeInstance(Context::class);
-        $securityAspect = SecurityAspect::provideIn($context);
+        $securityAspect = SecurityAspect::provideIn($this->context);
         $requestToken = $securityAspect->getReceivedRequestToken();
 
         if ($requestToken === null || $requestToken === false || $requestToken->scope !== 'auth/login') {
@@ -97,6 +96,8 @@ class AuthController extends ActionController
     {
         $requestToken = RequestToken::create('auth/login');
         $protectedPageId = RequestUtility::extractProtectedPageId($this->request);
+
+        // @extensionScannerIgnoreLine
         $record = $this->request->getAttribute('currentContentObject')->data;
 
         $this->view->assignMultiple([

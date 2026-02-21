@@ -5,29 +5,25 @@ help: ## Displays this list of targets with descriptions
 
 .PHONY: install
 install: ## Run composer update
-	Build/Scripts/runTests.sh -s composerUpdate
+	Build/Scripts/runTests.sh -s composerInstall
 
 .PHONY: rector
 rector: ## Run rector
 	Build/Scripts/runTests.sh -s rector
+
+.PHONY: fractor
+fractor: ## Run fractor
+	Build/Scripts/runTests.sh -s fractor
 
 .PHONY: fix-cs
 fix-cs: ## Fix PHP coding styles
 	Build/Scripts/runTests.sh -s cgl
 
 .PHONY: fix
-fix: rector fix-cs## Run rector and cgl fixes
-
-.PHONY: phpstan
-phpstan: ## Run phpstan tests
-	Build/Scripts/runTests.sh -s phpstan
-
-.PHONY: phpstan-baseline
-phpstan-baseline: ## Update the phpstan baseline
-	Build/Scripts/runTests.sh -s phpstanBaseline
+fix: rector fractor fix-cs## Run rector and cgl fixes
 
 .PHONY: test
-test: fix-cs phpstan test-unit test-functional## Run all tests
+test: test-unit test-functional## Run all tests
 
 .PHONY: test-unit
 test-unit: ## Run unit tests

@@ -19,7 +19,7 @@ use TYPO3\CMS\Core\Site\Entity\Site;
 class AuthMiddleware implements MiddlewareInterface
 {
     public function __construct(
-        private AuthService $authService,
+        private readonly AuthService $authService,
         private readonly EventDispatcherInterface $eventDispatcher,
     ) {}
 

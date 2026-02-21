@@ -6,13 +6,14 @@ use PHPUnit\Framework\Attributes\Test;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Rovitch\PagePassword\Middleware\AuthMiddleware;
 use Rovitch\PagePassword\Service\AuthService;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Routing\PageArguments;
+use TYPO3\CMS\Core\Routing\PageRouter;
+use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
-use TYPO3\CMS\Frontend\Http\RequestHandler;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 class AuthMiddlewareTest extends UnitTestCase
@@ -47,7 +48,7 @@ class AuthMiddlewareTest extends UnitTestCase
         $middleware = new AuthMiddleware($authService, $this->eventDispatcher);
 
         $request = $this->prepareTestRequest();
-        $mockHandler = $this->prophesize(RequestHandler::class);
+        $mockHandler = $this->prophesize(RequestHandlerInterface::class);
         $mockHandler->handle($request)->shouldNotBeCalled();
 
         $response = $middleware->process($request, $mockHandler->reveal());
@@ -70,7 +71,7 @@ class AuthMiddlewareTest extends UnitTestCase
         $middleware = new AuthMiddleware($authService, $this->eventDispatcher);
 
         $request = $this->prepareTestRequest();
-        $mockHandler = $this->prophesize(RequestHandler::class);
+        $mockHandler = $this->prophesize(RequestHandlerInterface::class);
         $mockHandler->handle($request)->shouldBeCalled();
 
         $middleware->process($request, $mockHandler->reveal());
@@ -91,7 +92,7 @@ class AuthMiddlewareTest extends UnitTestCase
         $middleware = new AuthMiddleware($authService, $this->eventDispatcher);
 
         $request = $this->prepareTestRequest();
-        $mockHandler = $this->prophesize(RequestHandler::class);
+        $mockHandler = $this->prophesize(RequestHandlerInterface::class);
         $mockHandler->handle($request)->shouldBeCalled();
 
         $middleware->process($request, $mockHandler->reveal());
@@ -99,20 +100,16 @@ class AuthMiddlewareTest extends UnitTestCase
 
     private function prepareTestRequest(string $pageType = '0'): ServerRequestInterface
     {
-        $frontendController = $this->createMock(TypoScriptFrontendController::class);
-        $frontendController->rootLine = [];
-
         $frontendUser = $this->createMock(FrontendUserAuthentication::class);
         $pageArguments = new PageArguments(1, $pageType, []);
 
-        $siteRouter = $this->createMock(\TYPO3\CMS\Core\Routing\PageRouter::class);
-        $site = $this->createMock(\TYPO3\CMS\Core\Site\Entity\Site::class);
+        $siteRouter = $this->createMock(PageRouter::class);
+        $site = $this->createMock(Site::class);
         $site->method('getRouter')->willReturn($siteRouter);
 
         $request = new ServerRequest('https://example.com/page');
 
         return $request->withAttribute('routing', $pageArguments)
-            ->withAttribute('frontend.controller', $frontendController)
             ->withAttribute('frontend.user', $frontendUser)
             ->withAttribute('site', $site);
     }

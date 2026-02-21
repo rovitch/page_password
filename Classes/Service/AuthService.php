@@ -36,6 +36,7 @@ class AuthService
     protected array $unlockedPages = [];
 
     protected FrontendUserAuthentication $user;
+    public function __construct(private readonly LinkService $linkService) {}
 
     public function setRootlineUtility(?RootlineUtility $rootlineUtility): void
     {
@@ -85,9 +86,8 @@ class AuthService
     protected function initLoginPageId(ServerRequestInterface $request): void
     {
         $siteConfiguration = $request->getAttribute('site')->getConfiguration();
-        $linkService = GeneralUtility::makeInstance(LinkService::class);
         $loginPageLink = $siteConfiguration['pagepassword_default_login_page'] ?? '';
-        $linkData = $linkService->resolve($loginPageLink);
+        $linkData = $this->linkService->resolve($loginPageLink);
         $this->loginPageId = (int)($linkData['pageuid'] ?? 0);
     }
 
