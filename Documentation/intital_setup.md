@@ -32,7 +32,7 @@ Otherwise, you may need to adjust the CSS to fit your site's layout.
 <details>
   <summary>1. Create a new backend layout</summary>
 
-  Register a new backend layout in your site package or directly in typo3 backend.
+  Register a new backend layout in your site package or directly in TYPO3 backend.
 
   ```
     mod {
@@ -99,7 +99,7 @@ Otherwise, you may need to adjust the CSS to fit your site's layout.
 > Typoscript **MUST** be added **AFTER** your main typoscript PAGE declaration
 
 > [!NOTE]
-> If you registered the layout directly in the typo3 backend, replace: `[page["backend_layout"] == 'pagets__pagepassword_login']` with `[page["backend_layout"] == 'xxx']` where `xxx` is the backend layout uid
+> If you registered the layout directly in the TYPO3 backend, replace: `[page["backend_layout"] == 'pagets__pagepassword_login']` with `[page["backend_layout"] == 'xxx']` where `xxx` is the backend layout uid
 
 ### ✅ 5. Test & Troubleshoot
 **Test steps:**
