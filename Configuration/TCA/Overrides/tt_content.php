@@ -16,6 +16,7 @@ defined('TYPO3') || die();
             'EXT:page_password/Resources/Public/Icons/Extension.svg',
             'forms',
             'LLL:EXT:page_password/Resources/Private/Language/locallang.xlf:plugin.page_password_form.description',
+            'FILE:EXT:page_password/Configuration/FlexForms/PagePasswordForm.xml'
         );
     } else {
         $indexPluginSignature = ExtensionUtility::registerPlugin(

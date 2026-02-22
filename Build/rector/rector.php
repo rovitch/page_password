@@ -22,6 +22,7 @@ use Ssch\TYPO3Rector\CodeQuality\General\ExtEmConfRector;
 use Ssch\TYPO3Rector\Configuration\Typo3Option;
 use Ssch\TYPO3Rector\Set\Typo3LevelSetList;
 use Ssch\TYPO3Rector\Set\Typo3SetList;
+use Ssch\TYPO3Rector\TYPO313\v0\RemoveSpecialPropertiesOfPageArraysRector;
 use Ssch\TYPO3Rector\TYPO313\v2\RemoveAddRootLineFieldsRector;
 use Ssch\TYPO3Rector\TYPO313\v4\MigratePluginContentElementAndPluginSubtypesRector;
 use Ssch\TYPO3Rector\TYPO314\v0\DropFifthParameterForExtensionUtilityConfigurePluginRector;
@@ -57,6 +58,8 @@ return RectorConfig::configure()
         RemoveParentCallWithoutParentRector::class,
         // Plugins are only used in typoScript PAGE.10 = USER, no need to migrate to CType
         MigratePluginContentElementAndPluginSubtypesRector::class,
+        // Condition is set manually for typo < 13
+        RemoveSpecialPropertiesOfPageArraysRector::class,
         // Condition is set manually for typo < 13
         RemoveAddRootLineFieldsRector::class,
         // Condition is set manually for typo < 14
