@@ -35,15 +35,4 @@ defined('TYPO3') || die();
     }
 
     ExtensionManagementUtility::addToAllTCAtypes('tt_content', '--div--;Configuration,pi_flexform,', $indexPluginSignature, 'after:subheader');
-
-    $GLOBALS['TCA']['tt_content']['types']['pagepassword_form'] = array_replace_recursive(
-        $GLOBALS['TCA']['tt_content']['types']['pagepassword_form'] ?? [],
-        [
-            'showitem' => '
-                    --div--;General,
-                    --palette--;General;general,
-                    --div--;LLL:EXT:page_password/Resources/Private/Language/locallang.xlf:plugin.page_password_form.settings.tab.configuration,
-                    pi_flexform',
-        ],
-    );
 })();
