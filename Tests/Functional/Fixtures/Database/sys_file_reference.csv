@@ -1,0 +1,4 @@
+sys_file_reference,,,,,,,,,,
+,uid,pid,tstamp,crdate,sys_language_uid,l10n_parent,uid_local,uid_foreign,tablenames,fieldname
+,1,4,1771758032,1771758032,0,0,1,2,tt_content,settings.loginLogo
+,2,4,1771758032,1771758032,0,0,2,2,tt_content,settings.loginLogoDark

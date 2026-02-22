@@ -33,7 +33,7 @@ final class AuthControllerTest extends FunctionalTestCase
     ];
 
     /**
-     * @return array<string, array<int, array<string, int>>>
+     * @return array<string, list<array<string, int|string>>>
      */
     public static function protectedPagesProvider(): array
     {
@@ -174,18 +174,30 @@ final class AuthControllerTest extends FunctionalTestCase
         self::assertStringContainsString('name="tx_pagepassword_form[__referrer][@action]" value="form"', $html);
     }
 
+    /**
+     * @param array<string, string|int> $page
+     */
     #[Test]
-    public function loginFormDisplayCorrectConfiguration(): void
+    #[DataProvider('protectedPagesProvider')]
+    public function loginFormDisplayCorrectConfiguration(array $page): void
     {
-        // TODO
+        $request = new InternalRequest($page['slug']);
+        $response = $this->executeFrontendSubRequest($request, null, true);
+        $html = (string)$response->getBody();
+        self::assertStringContainsString('pagePassword.addCustomStyles(`#db5151`, `#e79b32`);', $html);
+        self::assertStringContainsString('dark:bg-gray-900', $html);
+        self::assertStringContainsString('/user_upload/your_logo_light.png', $html);
+        self::assertStringContainsString('/user_upload/your_logo_dark.png', $html);
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->importCSVDataSet(__DIR__ . '/../Fixtures/Database/SiteStructure.csv');
-        $this->importCSVDataSet(__DIR__ . '/../Fixtures/Database/ContentElementPagePasswordForm.csv');
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/Database/pages.csv');
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/Database/tt_content.csv');
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/Database/sys_file.csv');
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/Database/sys_file_reference.csv');
         $this->setUpFrontendRootPage(1, [
             'constants' => [
                 'EXT:fluid_styled_content/Configuration/TypoScript/constants.typoscript',
@@ -206,6 +218,5 @@ final class AuthControllerTest extends FunctionalTestCase
             }
         }
         return SetCookie::fromString('typo3nonce=');
-
     }
 }

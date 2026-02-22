@@ -7,16 +7,16 @@ tt_content,,,,,,
                                         <sheet index=""sDEF"">
                                             <language index=""lDEF"">
                                                 <field index=""settings.enableDarkMode"">
-                                                    <value index=""vDEF"">0</value>
+                                                    <value index=""vDEF"">1</value>
                                                 </field>
                                                 <field index=""settings.loginLogo"">
-                                                    <value index=""vDEF"">0</value>
+                                                    <value index=""vDEF"">1</value>
                                                 </field>
                                                 <field index=""settings.loginHighlightColor"">
                                                     <value index=""vDEF"">#db5151</value>
                                                 </field>
                                                 <field index=""settings.loginLogoDark"">
-                                                    <value index=""vDEF"">0</value>
+                                                    <value index=""vDEF"">1</value>
                                                 </field>
                                                 <field index=""settings.loginHighlightColorDark"">
                                                     <value index=""vDEF"">#e79b32</value>

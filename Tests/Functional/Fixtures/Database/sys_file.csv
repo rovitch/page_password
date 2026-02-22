@@ -1,0 +1,4 @@
+sys_file,,,,,,,,,,,,,,,
+,uid,pid,tstamp,identifier,identifier_hash,folder_hash,extension,name,sha1,creation_date,modification_date,storage,type,mime_type,size
+,1,0,1771758032,/user_upload/your_logo_light.png,786e47367c46e393c8f484120425212a6a75ec8d,19669f1e02c2f16705ec7587044c66443be70725,png,your_logo_light.png,1484a49d9c7794d65c5883f256a2e4e4177dffbe,1771758032,1771758032,1,2,image/png,49409
+,2,0,1771758032,/user_upload/your_logo_dark.png,a1a4d32c0897d2586e283d4eb70f70a8d8508da7,19669f1e02c2f16705ec7587044c66443be70725,png,your_logo_dark.png,5acb9db04e16b125f13294edf1065fe9d6202493,1771758032,1771758032,1,2,image/png,71163
