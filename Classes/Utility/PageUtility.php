@@ -12,7 +12,7 @@ final class PageUtility
      */
     public static function extractPageId(array $page): int
     {
-        return $page['_LOCALIZED_UID'] ?? $page['uid'];
+        return $page['_PAGES_OVERLAY_UID'] ?? $page['_LOCALIZED_UID'] ?? $page['uid'];
     }
 
     /**

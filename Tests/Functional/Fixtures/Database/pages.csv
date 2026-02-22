@@ -1,6 +1,10 @@
-pages,,,,,,,
-,uid,pid,title,slug,tx_pagepassword_enable,tx_pagepassword_extend_to_subpages,tx_pagepassword_password
-,1,0,Home,/,0,0,
-,2,1,Protected page,/protected-page,1,1,"$argon2id$v=19$m=65536,t=16,p=1$S1BDNkRjeFZEd2YxZVVISg$6SV+ukufNM1TRMXzbYOV/VeLp+HFPdREereYAPnKEgY"
-,3,2,SubPage inherit protection,/subpage-inherit-protection,0,0,
-,4,1,Login,/login,0,0,
+pages,,,,,,,,,,
+,uid,pid,title,slug,sys_language_uid,l10n_parent,l10n_state,tx_pagepassword_enable,tx_pagepassword_extend_to_subpages,tx_pagepassword_password
+,1,0,Home,/,0,0,,0,0,
+,2,1,Protected page,/protected-page,0,0,,1,1,"$argon2id$v=19$m=65536,t=16,p=1$S1BDNkRjeFZEd2YxZVVISg$6SV+ukufNM1TRMXzbYOV/VeLp+HFPdREereYAPnKEgY"
+,3,2,SubPage inherit protection,/subpage-inherit-protection,0,0,,0,0,
+,4,1,Login,/login,0,0,,0,0,
+,5,0,Accueil,/,1,1,,0,0,
+,6,1,Page protégée,/page-protegee,1,2,"{""tx_pagepassword_enable"":""parent"",""tx_pagepassword_extend_to_subpages"":""parent"",""tx_pagepassword_password"":""parent""}",1,1,
+,7,2,Sous-page protégée hérite de la protection,/sous-page-protege-herite-de-la-protection,1,3,"{""tx_pagepassword_enable"":""parent"",""tx_pagepassword_extend_to_subpages"":""parent"",""tx_pagepassword_password"":""parent""}",0,0,
+,8,1,Connexion,/connexion,1,4,,0,0,

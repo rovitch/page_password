@@ -1,7 +1,32 @@
-tt_content,,,,,,
-,uid,pid,CType,header,pi_flexform,bodytext
-,1,1,textpic,,,<p>Home page not protected</p>
-,2,4,pagepassword_form,,"<?xml version=""1.0"" encoding=""utf-8"" standalone=""yes"" ?>
+tt_content,,,,,,,
+,uid,pid,sys_language_uid,CType,header,pi_flexform,bodytext
+,1,1,0,textpic,,,<p>Home page not protected</p>
+,2,4,0,pagepassword_form,,"<?xml version=""1.0"" encoding=""utf-8"" standalone=""yes"" ?>
+                                <T3FlexForms>
+                                    <data>
+                                        <sheet index=""sDEF"">
+                                            <language index=""lDEF"">
+                                                <field index=""settings.enableDarkMode"">
+                                                    <value index=""vDEF"">1</value>
+                                                </field>
+                                                <field index=""settings.loginLogo"">
+                                                    <value index=""vDEF"">1</value>
+                                                </field>
+                                                <field index=""settings.loginHighlightColor"">
+                                                    <value index=""vDEF"">#db5151</value>
+                                                </field>
+                                                <field index=""settings.loginLogoDark"">
+                                                    <value index=""vDEF"">1</value>
+                                                </field>
+                                                <field index=""settings.loginHighlightColorDark"">
+                                                    <value index=""vDEF"">#e79b32</value>
+                                                </field>
+                                            </language>
+                                        </sheet>
+                                    </data>
+                                </T3FlexForms>",
+,3,1,1,textpic,,,<p>Page d’accueil non protégée</p>
+,4,4,1,pagepassword_form,,"<?xml version=""1.0"" encoding=""utf-8"" standalone=""yes"" ?>
                                 <T3FlexForms>
                                     <data>
                                         <sheet index=""sDEF"">

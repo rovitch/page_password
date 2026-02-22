@@ -50,6 +50,41 @@ final class AuthControllerTest extends FunctionalTestCase
                     'slug' => '/subpage-inherit-protection',
                 ],
             ],
+            '[fr] page has protection enabled' => [
+                [
+                    'uid' => 2,
+                    'slug' => '/fr/page-protegee',
+                ],
+            ],
+            '[fr] page inherit protection' => [
+                [
+                    'uid' => 3,
+                    'slug' => '/fr/sous-page-protege-herite-de-la-protection',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, list<array<string, int|string>>>
+     */
+    public static function translatedProtectedPagesProvider(): array
+    {
+        return [
+            '[fr] page has protection enabled' => [
+                [
+                    'uid' => 2,
+                    'slug' => '/fr/page-protegee',
+                    'orig_slug' => '/protected-page',
+                ],
+            ],
+            '[fr] page inherit protection' => [
+                [
+                    'uid' => 3,
+                    'slug' => '/fr/sous-page-protege-herite-de-la-protection',
+                    'orig_slug' => '/subpage-inherit-protection',
+                ],
+            ],
         ];
     }
 
@@ -96,13 +131,41 @@ final class AuthControllerTest extends FunctionalTestCase
      * @param array<string, string|int> $page
      */
     #[Test]
+    #[DataProvider('translatedProtectedPagesProvider')]
+    public function translatedProtectedPageWithUnlockedParentRedirectToLoginForm(array $page): void
+    {
+        // Login to the main language page
+        $request = new InternalRequest($page['orig_slug']);
+        $response = $this->executeFrontendSubRequest($request, null, true);
+        $html = (string)$response->getBody();
+        $nonceCookie = $this->extractCookieFromResponse($response, 'typo3nonce');
+
+        $formData = (new FormDataFactory())->fromHtmlMarkupAndXpath($html);
+        $postRequest = $formData
+            ->with('tx_pagepassword_form.password', 'valid_password')
+            ->toPostRequest($request->withUri(new Uri('/login'))->withCookieParams([$nonceCookie->getName() => $nonceCookie->getValue()]));
+
+        $response = $this->executeFrontendSubRequest($postRequest);
+        $feTypoUserCookie = $this->extractCookieFromResponse($response, 'fe_typo_user');
+
+        // Fetch translated page with cookie from the main language unlocked page
+        $request = (new InternalRequest($page['slug']))->withCookieParams([$feTypoUserCookie->getName() => $feTypoUserCookie->getValue()]);
+        $response = $this->executeFrontendSubRequest($request);
+
+        self::assertInstanceOf(RedirectResponse::class, $response);
+    }
+
+    /**
+     * @param array<string, string|int> $page
+     */
+    #[Test]
     #[DataProvider('protectedPagesProvider')]
     public function loginActionWithValidPasswordRedirectsToTargetPage(array $page): void
     {
         $request = new InternalRequest($page['slug']);
         $response = $this->executeFrontendSubRequest($request, null, true);
         $html = (string)$response->getBody();
-        $nonceCookie = $this->extractNonceCookieFromResponse($response);
+        $nonceCookie = $this->extractCookieFromResponse($response, 'typo3nonce');
 
         $formData = (new FormDataFactory())->fromHtmlMarkupAndXpath($html);
         $postRequest = $formData
@@ -124,7 +187,7 @@ final class AuthControllerTest extends FunctionalTestCase
         $request = new InternalRequest($page['slug']);
         $response = $this->executeFrontendSubRequest($request, null, true);
         $html = (string)$response->getBody();
-        $nonceCookie = $this->extractNonceCookieFromResponse($response);
+        $nonceCookie = $this->extractCookieFromResponse($response, 'typo3nonce');
 
         $formData = (new FormDataFactory())->fromHtmlMarkupAndXpath($html);
         $postRequest = $formData
@@ -145,7 +208,7 @@ final class AuthControllerTest extends FunctionalTestCase
         $request = new InternalRequest($page['slug']);
         $response = $this->executeFrontendSubRequest($request, null, true);
         $html = (string)$response->getBody();
-        $nonceCookie = $this->extractNonceCookieFromResponse($response);
+        $nonceCookie = $this->extractCookieFromResponse($response, 'typo3nonce');
 
         $formData = (new FormDataFactory())->fromHtmlMarkupAndXpath($html);
         $postRequest = $formData
@@ -210,13 +273,13 @@ final class AuthControllerTest extends FunctionalTestCase
         ]);
     }
 
-    protected function extractNonceCookieFromResponse(ResponseInterface $response): SetCookie
+    protected function extractCookieFromResponse(ResponseInterface $response, string $name): SetCookie
     {
         foreach (explode(',', $response->getHeaderLine('Set-Cookie')) as $strCookie) {
-            if (str_contains($strCookie, 'typo3nonce')) {
+            if (str_contains($strCookie, $name)) {
                 return SetCookie::fromString($strCookie);
             }
         }
-        return SetCookie::fromString('typo3nonce=');
+        return SetCookie::fromString("$name=");
     }
 }

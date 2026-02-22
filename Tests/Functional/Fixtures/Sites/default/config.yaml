@@ -13,5 +13,18 @@ languages:
     direction: ltr
     flag: us
     websiteTitle: ''
+  -
+    title: French
+    enabled: true
+    languageId: '1'
+    base: /fr/
+    locale: fr_FR.utf8
+    iso-639-1: fr
+    navigationTitle: Français
+    hreflang: fr-fr
+    fallbackType: strict
+    fallbacks: '0'
+    flag: fr
+    websiteTitle: ''
 rootPageId: 1
 pagepassword_default_login_page: 't3://page?uid=4'

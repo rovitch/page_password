@@ -28,6 +28,13 @@ class PageUtilityTest extends UnitTestCase
                 ],
                 2,
             ],
+            'translated page with localized uid (TYPO3 < 13)' => [
+                [
+                    'uid' => 1,
+                    '_PAGES_OVERLAY_UID' => 2,
+                ],
+                2,
+            ],
         ];
     }
 
