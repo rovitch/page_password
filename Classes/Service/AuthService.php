@@ -6,6 +6,7 @@ namespace Rovitch\PagePassword\Service;
 
 use Doctrine\DBAL\Exception;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 use Rovitch\PagePassword\Utility\PageUtility;
 use Rovitch\PagePassword\Utility\RequestUtility;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
@@ -36,7 +37,10 @@ class AuthService
     protected array $unlockedPages = [];
 
     protected FrontendUserAuthentication $user;
-    public function __construct(private readonly LinkService $linkService) {}
+    public function __construct(
+        private readonly LinkService $linkService,
+        private readonly LoggerInterface $logger,
+    ) {}
 
     public function setRootlineUtility(?RootlineUtility $rootlineUtility): void
     {
@@ -60,6 +64,7 @@ class AuthService
      */
     public function withRequest(ServerRequestInterface $request): self
     {
+        $this->logger->debug('Init PagePassword AuthService');
         $this->initLoginPageId($request);
 
         $this->currentPageId = $request->getAttribute('routing')->getPageId();
@@ -75,6 +80,7 @@ class AuthService
         try {
             $rootline = $rootlineUtility->get();
         } catch (\RuntimeException) {
+            $this->logger->debug('Failed to retrieve rootline');
             $rootline = [];
         }
 
@@ -153,6 +159,7 @@ class AuthService
             $hashInstance = GeneralUtility::makeInstance(PasswordHashFactory::class)->get($hash, 'BE');
             return $hashInstance->checkPassword($password, $hash);
         } catch (InvalidPasswordHashException) {
+            $this->logger->debug('Password hash is not valid');
             return false;
         }
     }

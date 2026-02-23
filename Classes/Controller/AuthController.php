@@ -6,6 +6,7 @@ namespace Rovitch\PagePassword\Controller;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
+use Psr\Log\LoggerInterface;
 use Rovitch\PagePassword\Service\AuthService;
 use Rovitch\PagePassword\Utility\RequestUtility;
 use TYPO3\CMS\Core\Context\Context;
@@ -29,11 +30,13 @@ class AuthController extends ActionController
     public function __construct(
         private readonly LanguageServiceFactory $languageServiceFactory,
         private readonly Context $context,
+        private readonly LoggerInterface $logger,
         private AuthService $authService,
     ) {}
 
     protected function initializeAction(): void
     {
+        $this->logger->debug('Init PagePassword action');
         $language = $this->request->getAttribute('language');
         $this->languageService = $this->languageServiceFactory->createFromSiteLanguage($language);
         $this->authService = $this->authService->withRequest($this->request);
@@ -42,11 +45,13 @@ class AuthController extends ActionController
 
     public function formAction(): ResponseInterface
     {
+        $this->logger->debug('Check if access is already granted and redirect to target page');
         if (!$this->authService->hasActiveProtection() || $this->authService->isAccessGranted()) {
+            $this->logger->debug('Access already granted, redirect to target uri {uri}', ['uri' => $this->redirectUri]);
             $response = new RedirectResponse($this->redirectUri);
             throw new PropagateResponseException($response, 303);
         }
-
+        $this->logger->debug('Access not granted, render login form');
         return $this->renderForm();
     }
 
@@ -59,6 +64,7 @@ class AuthController extends ActionController
         $requestToken = $securityAspect->getReceivedRequestToken();
 
         if ($requestToken === null || $requestToken === false || $requestToken->scope !== 'auth/login') {
+            $this->logger->debug('Missing or invalid request token during login', ['requestToken' => $requestToken]);
             return $this->renderFormWithError(
                 $this->languageService->sL('LLL:EXT:page_password/Resources/Private/Language/locallang.xlf:form.invalid_token'),
             );
@@ -72,6 +78,10 @@ class AuthController extends ActionController
 
         $parameters = RequestUtility::extractParameters($this->request);
         if ($this->authService->attemptPageUnlock($parameters['password'] ?? '')) {
+            $this->logger->info('Successful PagePassword unlock on page uid "{uid}" from "{ip}"', [
+                'uid' => RequestUtility::extractProtectedPageId($this->request),
+                'ip' => GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+            ]);
             $response =  new RedirectResponse($this->redirectUri);
             throw new PropagateResponseException($response, 303);
         }
@@ -83,6 +93,12 @@ class AuthController extends ActionController
 
     protected function renderFormWithError(string $message): ResponseInterface
     {
+        $this->logger->warning('PagePassword unlock failed on page uid "{uid}" from "{ip}" with message "{message}"', [
+            'uid' => RequestUtility::extractProtectedPageId($this->request),
+            'ip' => GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+            'message' => $message,
+        ]);
+
         $this->addFlashMessage(
             $message,
             $this->languageService->sL('LLL:EXT:page_password/Resources/Private/Language/locallang.xlf:form.error'),

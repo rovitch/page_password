@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 use Rovitch\PagePassword\Event\BeforeAccessIsGrantedEvent;
 use Rovitch\PagePassword\Service\AuthService;
 use TYPO3\CMS\Core\Http\RedirectResponse;
@@ -21,21 +22,34 @@ class AuthMiddleware implements MiddlewareInterface
     public function __construct(
         private readonly AuthService $authService,
         private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly LoggerInterface $logger
     ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $this->logger->debug('Process PagePassword middleware');
         $authService = $this->authService->withRequest($request);
 
-        $accessGranted = !$authService->hasActiveProtection() || $authService->isCurrentPageLoginForm() || $authService->isAccessGranted();
+        $hasActiveProtection = $authService->hasActiveProtection();
+        $isCurrentPageLoginForm = $authService->isCurrentPageLoginForm();
+        $isPageUnlocked = $authService->isAccessGranted();
+
+        $accessGranted = !$hasActiveProtection || $isCurrentPageLoginForm || $isPageUnlocked;
 
         /** @var BeforeAccessIsGrantedEvent $event */
         $event = $this->eventDispatcher->dispatch(
             new BeforeAccessIsGrantedEvent($accessGranted, $request, $authService),
         );
 
-        $accessGranted = $event->isAccessGranted();
-        if ($accessGranted) {
+        $accessGrantedOverride = $event->isAccessGranted();
+        if ($accessGranted || $accessGrantedOverride) {
+            $this->logger->debug('Access granted, handle request', [
+                'accessGranted' => $accessGranted,
+                'accessGrantedOverride' => $accessGrantedOverride,
+                'hasActiveProtection' => $hasActiveProtection,
+                'isCurrentPageLoginForm' => $isCurrentPageLoginForm,
+                'isPageUnlocked' => $isPageUnlocked,
+            ]);
             return $handler->handle($request);
         }
 
@@ -56,6 +70,13 @@ class AuthMiddleware implements MiddlewareInterface
         $site = $request->getAttribute('site');
         $uri = $site->getRouter()
             ->generateUri($authService->getLoginPageId(), $queryParams, '', RouterInterface::ABSOLUTE_PATH);
+
+        $this->logger->debug('Access denied, redirect to login page {uri}', [
+            'uri' => $uri,
+            'hasActiveProtection' => $hasActiveProtection,
+            'isCurrentPageLoginForm' => $isCurrentPageLoginForm,
+            'isPageUnlocked' => $isPageUnlocked,
+        ]);
 
         return new RedirectResponse($uri, 303);
     }
