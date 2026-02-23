@@ -132,7 +132,14 @@ class AuthService
 
         $candidate = reset($matchingUnlockedPages);
 
-        return isset($candidate['timestamp']) && $candidate['timestamp'] > $passwordChangedAt;
+        $accessGranted = isset($candidate['timestamp']) && $candidate['timestamp'] > $passwordChangedAt;
+
+        if (!$accessGranted) {
+            $this->logger->debug('Timestamp outdated, remove page access from user session data');
+            $this->removePageAccess($protectedPageId);
+        }
+
+        return $accessGranted;
     }
 
     public function isCurrentPageLoginForm(): bool
@@ -168,6 +175,22 @@ class AuthService
     {
         $this->removeDuplicatePageAccess($pageUid);
         $this->unlockedPages[] = $this->createPageAccessEntry($pageUid);
+        $this->setAndSaveSessionData();
+    }
+
+    protected function removePageAccess(int $pageUid): void
+    {
+        $this->removeDuplicatePageAccess($pageUid);
+        $this->unlockedPages = array_filter(
+            $this->unlockedPages,
+            fn($unlockedPage) => $unlockedPage['uid'] !== $pageUid
+        );
+        $this->setAndSaveSessionData();
+    }
+
+    protected function setAndSaveSessionData(): void
+    {
+        $this->logger->debug('Set and save session data', array_values($this->unlockedPages));
         $this->user->setAndSaveSessionData(self::SESSION_KEY_UNLOCKED_PAGES, array_values($this->unlockedPages));
     }
 
