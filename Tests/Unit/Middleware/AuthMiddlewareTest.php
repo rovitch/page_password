@@ -7,12 +7,15 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerTrait;
 use Rovitch\PagePassword\Middleware\AuthMiddleware;
 use Rovitch\PagePassword\Service\AuthService;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Routing\PageRouter;
 use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
@@ -22,6 +25,8 @@ class AuthMiddlewareTest extends UnitTestCase
 
     protected EventDispatcherInterface $eventDispatcher;
 
+    protected LoggerInterface $logger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -30,6 +35,11 @@ class AuthMiddlewareTest extends UnitTestCase
             {
                 return $event;
             }
+        };
+
+        $this->logger = new class () implements LoggerInterface {
+            use LoggerTrait;
+            public function log($level, string|\Stringable $message, array $context = []): void {}
         };
     }
 
@@ -45,7 +55,12 @@ class AuthMiddlewareTest extends UnitTestCase
         $authService->method('isAccessGranted')->willReturn(false);
         $authService->method('getLoginPageId')->willReturn(123);
 
-        $middleware = new AuthMiddleware($authService, $this->eventDispatcher);
+        $middleware = GeneralUtility::makeInstance(
+            AuthMiddleware::class,
+            $authService,
+            $this->eventDispatcher,
+            $this->logger
+        );
 
         $request = $this->prepareTestRequest();
         $mockHandler = $this->prophesize(RequestHandlerInterface::class);
@@ -68,7 +83,12 @@ class AuthMiddlewareTest extends UnitTestCase
         $authService->method('isAccessGranted')->willReturn(true);
         $authService->method('getLoginPageId')->willReturn(123);
 
-        $middleware = new AuthMiddleware($authService, $this->eventDispatcher);
+        $middleware = GeneralUtility::makeInstance(
+            AuthMiddleware::class,
+            $authService,
+            $this->eventDispatcher,
+            $this->logger
+        );
 
         $request = $this->prepareTestRequest();
         $mockHandler = $this->prophesize(RequestHandlerInterface::class);
@@ -89,7 +109,12 @@ class AuthMiddlewareTest extends UnitTestCase
         $authService->method('isAccessGranted')->willReturn(false);
         $authService->method('getLoginPageId')->willReturn(123);
 
-        $middleware = new AuthMiddleware($authService, $this->eventDispatcher);
+        $middleware = GeneralUtility::makeInstance(
+            AuthMiddleware::class,
+            $authService,
+            $this->eventDispatcher,
+            $this->logger
+        );
 
         $request = $this->prepareTestRequest();
         $mockHandler = $this->prophesize(RequestHandlerInterface::class);

@@ -8,6 +8,8 @@ use PHPUnit\Framework\MockObject\Exception;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerTrait;
 use Rovitch\PagePassword\Service\AuthService;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
@@ -23,6 +25,8 @@ class AuthServiceTest extends UnitTestCase
 {
     use ProphecyTrait;
 
+    protected LoggerInterface $logger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -30,6 +34,11 @@ class AuthServiceTest extends UnitTestCase
         $linkService = $this->createMock(LinkService::class);
         $linkService->method('resolve')->willReturn(['pageuid' => 123]);
         GeneralUtility::setSingletonInstance(LinkService::class, $linkService);
+
+        $this->logger = new class () implements LoggerInterface {
+            use LoggerTrait;
+            public function log($level, string|\Stringable $message, array $context = []): void {}
+        };
     }
 
     /**
@@ -172,7 +181,11 @@ class AuthServiceTest extends UnitTestCase
         $rootlineUtility = $this->createMock(RootlineUtility::class);
         $rootlineUtility->method('get')->willReturn($pageHierarchy);
 
-        $authService = GeneralUtility::makeInstance(AuthService::class, GeneralUtility::makeInstance(LinkService::class));
+        $authService = GeneralUtility::makeInstance(
+            AuthService::class,
+            GeneralUtility::makeInstance(LinkService::class),
+            $this->logger
+        );
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
         $authStatus = $authService->isAccessGranted();
@@ -242,7 +255,11 @@ class AuthServiceTest extends UnitTestCase
         $rootlineUtility = $this->createMock(RootlineUtility::class);
         $rootlineUtility->method('get')->willReturn($pageHierarchy);
 
-        $authService = GeneralUtility::makeInstance(AuthService::class, GeneralUtility::makeInstance(LinkService::class));
+        $authService = GeneralUtility::makeInstance(
+            AuthService::class,
+            GeneralUtility::makeInstance(LinkService::class),
+            $this->logger
+        );
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
         $unlockSuccessful = $authService->attemptPageUnlock('test');
@@ -269,7 +286,11 @@ class AuthServiceTest extends UnitTestCase
         $rootlineUtility = $this->createMock(RootlineUtility::class);
         $rootlineUtility->method('get')->willReturn($pageWithInvalidHash);
 
-        $authService = GeneralUtility::makeInstance(AuthService::class, GeneralUtility::makeInstance(LinkService::class));
+        $authService = GeneralUtility::makeInstance(
+            AuthService::class,
+            GeneralUtility::makeInstance(LinkService::class),
+            $this->logger
+        );
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
         $unlockResult = $authService->attemptPageUnlock('test');
@@ -287,7 +308,11 @@ class AuthServiceTest extends UnitTestCase
         $rootlineUtility = $this->createMock(RootlineUtility::class);
         $rootlineUtility->method('get')->willReturn([]);
 
-        $authService = GeneralUtility::makeInstance(AuthService::class, GeneralUtility::makeInstance(LinkService::class));
+        $authService = GeneralUtility::makeInstance(
+            AuthService::class,
+            GeneralUtility::makeInstance(LinkService::class),
+            $this->logger
+        );
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
         $isSpecialPage = $authService->isCurrentPageLoginForm();
@@ -305,7 +330,11 @@ class AuthServiceTest extends UnitTestCase
         $rootlineUtility = $this->createMock(RootlineUtility::class);
         $rootlineUtility->method('get')->willReturn([]);
 
-        $authService = GeneralUtility::makeInstance(AuthService::class, GeneralUtility::makeInstance(LinkService::class));
+        $authService = GeneralUtility::makeInstance(
+            AuthService::class,
+            GeneralUtility::makeInstance(LinkService::class),
+            $this->logger
+        );
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
         $loginPageId = $authService->getLoginPageId();
@@ -328,7 +357,11 @@ class AuthServiceTest extends UnitTestCase
             ],
         ]);
 
-        $authService = GeneralUtility::makeInstance(AuthService::class, GeneralUtility::makeInstance(LinkService::class));
+        $authService = GeneralUtility::makeInstance(
+            AuthService::class,
+            GeneralUtility::makeInstance(LinkService::class),
+            $this->logger
+        );
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
         $hasActiveProtection = $authService->hasActiveProtection();
