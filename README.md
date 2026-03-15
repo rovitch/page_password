@@ -23,10 +23,10 @@ PagePassword provides a simple way to restrict access to specific pages and thei
 ![examples.png](Documentation/img/examples.png)
 
 ## What's next?
-- Typo3 v14 compatibility
-- Enhanced documentation
-- Logging
-- Rate limiter
+- [~~Typo3 v14 compatibility~~ ] see [#437f8a9](https://github.com/rovitch/page_password/commit/437f8a9e25196eaec2218371fde1d0cece46fb04) and [#0223978](https://github.com/rovitch/page_password/commit/022397818ddc18a5c0fb877074d0784d09d7dbcd)
+- ~~Enhanced documentation~~ see [#730f45a](https://github.com/rovitch/page_password/commit/730f45a02af87aa5f4e80e230ff4191213f22e78) and [#faa0c44](https://github.com/rovitch/page_password/commit/faa0c4449881fb30b07cf2e0821c7fc1e4ae5463)
+- [~~Logging~~] see [#b1397bd](https://github.com/rovitch/page_password/commit/b1397bdf60c0a8a8edc35d6ef9c81d0a873a7917)
+- [~~Rate limiter~~] see [#c1ccaef](https://github.com/rovitch/page_password/commit/c1ccaefb6ae3c2f3ca3ff5af65db4e93fb198079)
 - Backend module overview
 - More customizations
 
