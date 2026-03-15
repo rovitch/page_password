@@ -79,6 +79,9 @@
 			<trans-unit id="form.invalid_token">
 				<source>Invalid request token</source>
 			</trans-unit>
+			<trans-unit id="form.locked">
+				<source>The login is locked due to too many failed login attempts.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

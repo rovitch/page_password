@@ -89,6 +89,10 @@
 				<source>Invalid request token</source>
 				<target>Token invalide</target>
 			</trans-unit>
+			<trans-unit id="form.locked">
+				<source>The login is locked due to too many failed login attempts from your IP address.</source>
+				<target>La connexion a été bloquée en raison d'un trop grand nombre de tentatives de connexion infructueuses.</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

@@ -1,0 +1,4 @@
+# cat=Login; type=string; label=loginRateLimit: Maximum amount of login attempts for the time interval in [loginRateLimitInterval], before further login requests will be denied. Setting this value to "0" will disable login rate limiting.
+loginRateLimit = 5
+# cat=Login; type=options[5 minutes=5 minutes,15 minutes=15 minutes,30 minutes=30 minutes,1 heure=60 minutes]; label=loginRateLimitInterval: Allowed time interval for the configured rate limit.
+loginRateLimitInterval = 15 minutes

@@ -5,21 +5,28 @@ declare(strict_types=1);
 namespace Rovitch\PagePassword\Controller;
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
+use Rovitch\PagePassword\RateLimiter\RateLimiterFactory;
 use Rovitch\PagePassword\Service\AuthService;
 use Rovitch\PagePassword\Utility\RequestUtility;
+use Symfony\Component\RateLimiter\LimiterInterface;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\SecurityAspect;
 use TYPO3\CMS\Core\Http\PropagateResponseException;
 use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Localization\LanguageService;
-use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
+use TYPO3\CMS\Core\RateLimiter\RequestRateLimitedException;
 use TYPO3\CMS\Core\Security\RequestToken;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class AuthController extends ActionController
 {
@@ -28,17 +35,15 @@ class AuthController extends ActionController
     protected string $redirectUri;
 
     public function __construct(
-        private readonly LanguageServiceFactory $languageServiceFactory,
         private readonly Context $context,
         private readonly LoggerInterface $logger,
         private AuthService $authService,
+        private readonly RateLimiterFactory $rateLimiterFactory
     ) {}
 
     protected function initializeAction(): void
     {
         $this->logger->debug('Init PagePassword action');
-        $language = $this->request->getAttribute('language');
-        $this->languageService = $this->languageServiceFactory->createFromSiteLanguage($language);
         $this->authService = $this->authService->withRequest($this->request);
         $this->redirectUri = $this->getRedirectUri()->__toString();
     }
@@ -56,6 +61,9 @@ class AuthController extends ActionController
     }
 
     /**
+     * @return ResponseInterface
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
      * @throws PropagateResponseException
      */
     public function loginAction(): ResponseInterface
@@ -66,7 +74,7 @@ class AuthController extends ActionController
         if ($requestToken === null || $requestToken === false || $requestToken->scope !== 'auth/login') {
             $this->logger->debug('Missing or invalid request token during login', ['requestToken' => $requestToken]);
             return $this->renderFormWithError(
-                $this->languageService->sL('LLL:EXT:page_password/Resources/Private/Language/locallang.xlf:form.invalid_token'),
+                LocalizationUtility::translate('form.invalid_token', 'page_password'),
             );
         }
 
@@ -76,18 +84,25 @@ class AuthController extends ActionController
             );
         }
 
+        try {
+            $rateLimiter = $this->ensureLoginRateLimit($this->request);
+        } catch (RequestRateLimitedException $e) {
+            return $this->renderFormWithError($e->getMessage());
+        }
+
         $parameters = RequestUtility::extractParameters($this->request);
         if ($this->authService->attemptPageUnlock($parameters['password'] ?? '')) {
             $this->logger->info('Successful PagePassword unlock on page uid "{uid}" from "{ip}"', [
                 'uid' => RequestUtility::extractProtectedPageId($this->request),
                 'ip' => GeneralUtility::getIndpEnv('REMOTE_ADDR'),
             ]);
+            $rateLimiter->reset();
             $response =  new RedirectResponse($this->redirectUri);
             throw new PropagateResponseException($response, 303);
         }
 
         return $this->renderFormWithError(
-            $this->languageService->sL('LLL:EXT:page_password/Resources/Private/Language/locallang.xlf:form.invalid_password'),
+            LocalizationUtility::translate('form.invalid_password', 'page_password'),
         );
     }
 
@@ -101,7 +116,7 @@ class AuthController extends ActionController
 
         $this->addFlashMessage(
             $message,
-            $this->languageService->sL('LLL:EXT:page_password/Resources/Private/Language/locallang.xlf:form.error'),
+            LocalizationUtility::translate('form.error', 'page_password'),
             ContextualFeedbackSeverity::ERROR,
         );
 
@@ -157,5 +172,28 @@ class AuthController extends ActionController
             }
         }
         return false;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return LimiterInterface
+     * @throws RequestRateLimitedException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
+     */
+    protected function ensureLoginRateLimit(ServerRequestInterface $request): LimiterInterface
+    {
+        $loginRateLimiter = $this->rateLimiterFactory->createPagePasswordRateLimiter($request);
+        $limit = $loginRateLimiter->consume();
+        if (!$limit->isAccepted()) {
+            $this->logger->debug('PagePassword login request has been rate limited for IP address {ipAddress}', ['ipAddress' => $request->getAttribute('normalizedParams')->getRemoteAddress()]);
+            throw new RequestRateLimitedException(
+                HttpUtility::HTTP_STATUS_403,
+                LocalizationUtility::translate('form.locked', 'page_password'),
+                '',
+                1773578940
+            );
+        }
+        return $loginRateLimiter;
     }
 }
