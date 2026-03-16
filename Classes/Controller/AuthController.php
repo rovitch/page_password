@@ -74,7 +74,7 @@ class AuthController extends ActionController
         if ($requestToken === null || $requestToken === false || $requestToken->scope !== 'auth/login') {
             $this->logger->debug('Missing or invalid request token during login', ['requestToken' => $requestToken]);
             return $this->renderFormWithError(
-                LocalizationUtility::translate('form.invalid_token', 'page_password'),
+                LocalizationUtility::translate('form.invalid_token', 'PagePassword'),
             );
         }
 
@@ -102,7 +102,7 @@ class AuthController extends ActionController
         }
 
         return $this->renderFormWithError(
-            LocalizationUtility::translate('form.invalid_password', 'page_password'),
+            LocalizationUtility::translate('form.invalid_password', 'PagePassword'),
         );
     }
 
@@ -116,7 +116,7 @@ class AuthController extends ActionController
 
         $this->addFlashMessage(
             $message,
-            LocalizationUtility::translate('form.error', 'page_password'),
+            LocalizationUtility::translate('form.error', 'PagePassword'),
             ContextualFeedbackSeverity::ERROR,
         );
 
@@ -189,7 +189,7 @@ class AuthController extends ActionController
             $this->logger->debug('PagePassword login request has been rate limited for IP address {ipAddress}', ['ipAddress' => $request->getAttribute('normalizedParams')->getRemoteAddress()]);
             throw new RequestRateLimitedException(
                 HttpUtility::HTTP_STATUS_403,
-                LocalizationUtility::translate('form.locked', 'page_password'),
+                LocalizationUtility::translate('form.locked', 'PagePassword'),
                 '',
                 1773578940
             );
