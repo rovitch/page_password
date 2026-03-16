@@ -220,6 +220,25 @@ final class AuthControllerTest extends FunctionalTestCase
         self::assertStringContainsString('Invalid request token', $responseHtml);
     }
 
+    #[Test]
+    public function loginActionWithToManyFailedAttemptsIsRateLimited(): void
+    {
+        for ($i = 0; $i <= 5; $i++) {
+            $request = new InternalRequest('/protected-page');
+            $response = $this->executeFrontendSubRequest($request, null, true);
+            $html = (string)$response->getBody();
+            $nonceCookie = $this->extractCookieFromResponse($response, 'typo3nonce');
+
+            $formData = (new FormDataFactory())->fromHtmlMarkupAndXpath($html);
+            $postRequest = $formData
+                ->with('tx_pagepassword_form.password', 'invalid_password')
+                ->toPostRequest($request->withUri(new Uri('/login'))->withCookieParams([$nonceCookie->getName() => $nonceCookie->getValue()]));
+            $responseHtml = (string)$this->executeFrontendSubRequest($postRequest)->getBody();
+        }
+
+        self::assertStringContainsString('The login is locked due to too many failed login attempts', $responseHtml);
+    }
+
     /**
      * @param array<string, string|int> $page
      */
