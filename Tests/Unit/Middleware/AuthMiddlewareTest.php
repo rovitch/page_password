@@ -3,6 +3,7 @@
 namespace Rovitch\PagePassword\Tests\Unit\Middleware;
 
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -15,6 +16,7 @@ use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Routing\PageRouter;
 use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
@@ -26,6 +28,8 @@ class AuthMiddlewareTest extends UnitTestCase
     protected EventDispatcherInterface $eventDispatcher;
 
     protected LoggerInterface $logger;
+
+    protected MockObject&SiteFinder $siteFinder;
 
     protected function setUp(): void
     {
@@ -41,6 +45,8 @@ class AuthMiddlewareTest extends UnitTestCase
             use LoggerTrait;
             public function log($level, string|\Stringable $message, array $context = []): void {}
         };
+
+        $this->siteFinder = $this->getMockBuilder(SiteFinder::class)->disableOriginalConstructor()->getMock();
     }
 
     #[Test]
@@ -59,7 +65,8 @@ class AuthMiddlewareTest extends UnitTestCase
             AuthMiddleware::class,
             $authService,
             $this->eventDispatcher,
-            $this->logger
+            $this->logger,
+            $this->siteFinder
         );
 
         $request = $this->prepareTestRequest();
@@ -87,7 +94,8 @@ class AuthMiddlewareTest extends UnitTestCase
             AuthMiddleware::class,
             $authService,
             $this->eventDispatcher,
-            $this->logger
+            $this->logger,
+            $this->siteFinder
         );
 
         $request = $this->prepareTestRequest();
@@ -113,7 +121,8 @@ class AuthMiddlewareTest extends UnitTestCase
             AuthMiddleware::class,
             $authService,
             $this->eventDispatcher,
-            $this->logger
+            $this->logger,
+            $this->siteFinder
         );
 
         $request = $this->prepareTestRequest();
