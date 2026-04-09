@@ -12,9 +12,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Rovitch\PagePassword\Event\BeforeAccessIsGrantedEvent;
 use Rovitch\PagePassword\Service\AuthService;
+use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Routing\RouterInterface;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Site\Entity\Site;
 
 class AuthMiddleware implements MiddlewareInterface
@@ -22,7 +24,8 @@ class AuthMiddleware implements MiddlewareInterface
     public function __construct(
         private readonly AuthService $authService,
         private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly SiteFinder $siteFinder
     ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -58,16 +61,23 @@ class AuthMiddleware implements MiddlewareInterface
             ->withPath($requestUri->getPath())
             ->withQuery($requestUri->getQuery());
 
+        try {
+            $site = $this->siteFinder->getSiteByPageId($authService->getLoginPageId());
+            $language = $site->getDefaultLanguage();
+        } catch (SiteNotFoundException) {
+            /** @var Site $site */
+            $site = $request->getAttribute('site');
+            $language = $request->getAttribute('language');
+        }
+        
         $queryParams = [
-            '_language' => $request->getAttribute('language'),
+            '_language' => $language,
             'tx_pagepassword_form' => [
                 'uid' => $request->getAttribute('routing')->getPageId(),
                 'redirect_uri' => $redirectUri->__toString(),
             ],
         ];
 
-        /** @var Site $site */
-        $site = $request->getAttribute('site');
         $uri = $site->getRouter()
             ->generateUri($authService->getLoginPageId(), $queryParams, '', RouterInterface::ABSOLUTE_PATH);
 
