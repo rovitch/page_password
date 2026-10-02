@@ -9,9 +9,13 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Rovitch\PagePassword\Utility\PageUtility;
 use Rovitch\PagePassword\Utility\RequestUtility;
+use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Context\LanguageAspectFactory;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
+use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\LinkHandling\LinkService;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
@@ -40,6 +44,7 @@ class AuthService
     public function __construct(
         private readonly LinkService $linkService,
         private readonly LoggerInterface $logger,
+        private readonly SiteFinder $siteFinder,
     ) {}
 
     public function setRootlineUtility(?RootlineUtility $rootlineUtility): void
@@ -47,12 +52,30 @@ class AuthService
         $this->rootlineUtility = $rootlineUtility;
     }
 
-    protected function getRootlineUtility(int $pageId): RootlineUtility
+    protected function getRootlineUtility(int $pageId, ?int $languageId = null): RootlineUtility
     {
         if ($this->rootlineUtility === null) {
-            return GeneralUtility::makeInstance(RootlineUtility::class, $pageId);
+            $context = $languageId === null ? null : $this->createContextForLanguage($pageId, $languageId);
+            return GeneralUtility::makeInstance(RootlineUtility::class, $pageId, '', $context);
         }
         return $this->rootlineUtility;
+    }
+
+    /**
+     * Protection fields may differ per language (allowLanguageSynchronization), so the rootline of the
+     * protected page has to be resolved in the language it was requested in, not in the login page's language.
+     */
+    protected function createContextForLanguage(int $pageId, int $languageId): ?Context
+    {
+        try {
+            $siteLanguage = $this->siteFinder->getSiteByPageId($pageId)->getLanguageById($languageId);
+        } catch (SiteNotFoundException|\InvalidArgumentException) {
+            $this->logger->debug('Language {language} not available for page {page}', ['language' => $languageId, 'page' => $pageId]);
+            return null;
+        }
+        $context = clone GeneralUtility::makeInstance(Context::class);
+        $context->setAspect('language', LanguageAspectFactory::createFromSiteLanguage($siteLanguage));
+        return $context;
     }
 
     /**
@@ -75,7 +98,8 @@ class AuthService
 
         $protectedPageId = RequestUtility::extractProtectedPageId($request);
         $rootlinePageId = $protectedPageId === 0 ? $this->currentPageId : $protectedPageId;
-        $rootlineUtility = $this->getRootlineUtility($rootlinePageId);
+        $rootlineLanguageId = $protectedPageId === 0 ? null : RequestUtility::extractProtectedPageLanguageId($request);
+        $rootlineUtility = $this->getRootlineUtility($rootlinePageId, $rootlineLanguageId);
 
         try {
             $rootline = $rootlineUtility->get();

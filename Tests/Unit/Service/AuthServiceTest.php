@@ -16,6 +16,7 @@ use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\Routing\PageArguments;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
@@ -184,7 +185,8 @@ class AuthServiceTest extends UnitTestCase
         $authService = GeneralUtility::makeInstance(
             AuthService::class,
             GeneralUtility::makeInstance(LinkService::class),
-            $this->logger
+            $this->logger,
+            $this->createMock(SiteFinder::class)
         );
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
@@ -258,7 +260,8 @@ class AuthServiceTest extends UnitTestCase
         $authService = GeneralUtility::makeInstance(
             AuthService::class,
             GeneralUtility::makeInstance(LinkService::class),
-            $this->logger
+            $this->logger,
+            $this->createMock(SiteFinder::class)
         );
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
@@ -289,7 +292,8 @@ class AuthServiceTest extends UnitTestCase
         $authService = GeneralUtility::makeInstance(
             AuthService::class,
             GeneralUtility::makeInstance(LinkService::class),
-            $this->logger
+            $this->logger,
+            $this->createMock(SiteFinder::class)
         );
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
@@ -311,7 +315,8 @@ class AuthServiceTest extends UnitTestCase
         $authService = GeneralUtility::makeInstance(
             AuthService::class,
             GeneralUtility::makeInstance(LinkService::class),
-            $this->logger
+            $this->logger,
+            $this->createMock(SiteFinder::class)
         );
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
@@ -333,7 +338,8 @@ class AuthServiceTest extends UnitTestCase
         $authService = GeneralUtility::makeInstance(
             AuthService::class,
             GeneralUtility::makeInstance(LinkService::class),
-            $this->logger
+            $this->logger,
+            $this->createMock(SiteFinder::class)
         );
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);
@@ -360,7 +366,8 @@ class AuthServiceTest extends UnitTestCase
         $authService = GeneralUtility::makeInstance(
             AuthService::class,
             GeneralUtility::makeInstance(LinkService::class),
-            $this->logger
+            $this->logger,
+            $this->createMock(SiteFinder::class)
         );
         $authService->setRootlineUtility($rootlineUtility);
         $authService->withRequest($request);

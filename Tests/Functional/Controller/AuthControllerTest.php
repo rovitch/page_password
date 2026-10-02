@@ -181,6 +181,44 @@ final class AuthControllerTest extends FunctionalTestCase
      * @param array<string, string|int> $page
      */
     #[Test]
+    #[DataProvider('translatedProtectedPagesProvider')]
+    public function translatedProtectedPageIsAccessibleAfterLogin(array $page): void
+    {
+        $feTypoUserCookie = $this->loginWithValidPassword($page['slug']);
+
+        $request = (new InternalRequest($page['slug']))->withCookieParams([$feTypoUserCookie->getName() => $feTypoUserCookie->getValue()]);
+        $response = $this->executeFrontendSubRequest($request);
+
+        self::assertNotInstanceOf(RedirectResponse::class, $response);
+        self::assertSame(200, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function pageProtectedInTranslationOnlyShowsLoginForm(): void
+    {
+        $request = new InternalRequest('/fr/protegee-seulement-en-traduction');
+        $html = (string)$this->executeFrontendSubRequest($request, null, true)->getBody();
+
+        self::assertStringContainsString('name="tx_pagepassword_form[__referrer][@action]" value="form"', $html);
+        self::assertStringContainsString('name="tx_pagepassword_form[language]" value="1"', $html);
+    }
+
+    #[Test]
+    public function pageProtectedInTranslationOnlyIsAccessibleAfterLogin(): void
+    {
+        $slug = '/fr/protegee-seulement-en-traduction';
+        $feTypoUserCookie = $this->loginWithValidPassword($slug);
+
+        $request = (new InternalRequest($slug))->withCookieParams([$feTypoUserCookie->getName() => $feTypoUserCookie->getValue()]);
+        $response = $this->executeFrontendSubRequest($request);
+
+        self::assertSame(200, $response->getStatusCode());
+    }
+
+    /**
+     * @param array<string, string|int> $page
+     */
+    #[Test]
     #[DataProvider('protectedPagesProvider')]
     public function loginActionWithInvalidPasswordShowFormWithError(array $page): void
     {
@@ -290,6 +328,22 @@ final class AuthControllerTest extends FunctionalTestCase
                 'EXT:page_password/Configuration/TypoScript/setup.typoscript',
             ],
         ]);
+    }
+
+    protected function loginWithValidPassword(string $slug): SetCookie
+    {
+        $request = new InternalRequest($slug);
+        $response = $this->executeFrontendSubRequest($request, null, true);
+        $html = (string)$response->getBody();
+        $nonceCookie = $this->extractCookieFromResponse($response, 'typo3nonce');
+
+        $formData = (new FormDataFactory())->fromHtmlMarkupAndXpath($html);
+        $postRequest = $formData
+            ->with('tx_pagepassword_form.password', 'valid_password')
+            ->toPostRequest($request->withUri(new Uri('/login'))->withCookieParams([$nonceCookie->getName() => $nonceCookie->getValue()]));
+
+        $response = $this->executeFrontendSubRequest($postRequest);
+        return $this->extractCookieFromResponse($response, 'fe_typo_user');
     }
 
     protected function extractCookieFromResponse(ResponseInterface $response, string $name): SetCookie

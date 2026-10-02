@@ -24,4 +24,16 @@ class RequestUtility
         $parameters = self::extractParameters($request);
         return isset($parameters['uid']) && (int)$parameters['uid'] > 0 ? (int)$parameters['uid'] : 0;
     }
+
+    /**
+     * Language of the protected page the login form was requested for. The login page may live on another
+     * site and is rendered in that site's default language, so the protected page's language is passed along.
+     */
+    public static function extractProtectedPageLanguageId(ServerRequestInterface $request): ?int
+    {
+        $parameters = self::extractParameters($request);
+        return isset($parameters['language']) && is_numeric($parameters['language']) && (int)$parameters['language'] >= 0
+            ? (int)$parameters['language']
+            : null;
+    }
 }
