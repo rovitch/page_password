@@ -135,6 +135,7 @@ class AuthController extends ActionController
             'record' => $record,
             'redirectUri' => $this->redirectUri,
             'protectedPageId' => $protectedPageId,
+            'protectedPageLanguageId' => RequestUtility::extractProtectedPageLanguageId($this->request),
             'settings' => $this->settings,
             'requestToken' => $requestToken,
         ]);

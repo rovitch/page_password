@@ -74,6 +74,7 @@ class AuthMiddleware implements MiddlewareInterface
             '_language' => $language,
             'tx_pagepassword_form' => [
                 'uid' => $request->getAttribute('routing')->getPageId(),
+                'language' => $request->getAttribute('language')?->getLanguageId(),
                 'redirect_uri' => $redirectUri->__toString(),
             ],
         ];
